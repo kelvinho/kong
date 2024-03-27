@@ -1,0 +1,57 @@
+_format_version: "3.0"
+_transform: true
+
+consumers:
+- username: alex
+  keyauth_credentials:
+  - key: abc
+
+- username: alex2
+  basicauth_credentials:
+  - username: alex2
+    password: secret123
+
+plugins:
+- name: basic-auth
+  service: cas-api
+  config:
+   hide_credentials: true
+
+- name: key-auth
+  service: example_service
+  config:
+   key_names:
+   - apikey
+
+services:
+- host: httpbin.org
+  name: example_service
+  port: 80
+  protocol: http
+  routes:
+  - name: example_route
+    paths:
+    - /mock
+    strip_path: true
+
+- host: host.docker.internal
+  name: cas-api
+  port: 7156
+  protocol: https
+  path: /hello
+  routes:
+  - name: cas-api-service
+    paths:
+    - /cas
+    strip_path: true
+
+- host: host.docker.internal
+  name: cas-api2
+  port: 7156
+  protocol: https
+  path: /upload-file
+  routes:
+  - name: cas-api-service2
+    paths:
+    - /download
+    strip_path: true
